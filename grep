@@ -842,3 +842,33 @@ www.linkedin.com
 www.webex.com
 www.youtube.com
 
+naitsirhc@naitsirhc:~$ grep "href=" index.html | cut -d "/" -f3 | grep "\." | cut -d'"' -f1 | sort -u > list.txt
+naitsirhc@naitsirhc:~$ cat list.txt
+bit.ly
+blogs.cisco.com
+com.cisco.androidcisco
+community.cisco.com
+engage2demand.cisco.com
+globalcontacts.cloudapps.cisco.com
+idpswd.cloudapps.cisco.com
+idreg.cloudapps.cisco.com
+insider.cisco.com
+investor.cisco.com
+learninglocator.cloudapps.cisco.com
+locatr.cloudapps.cisco.com
+meraki.cisco.com
+mycase.cloudapps.cisco.com
+path><path d=
+secure.opinionlab.com
+software.cisco.com
+twitter.com
+umbrella.cisco.com
+www.appdynamics.com
+www.cisco.com
+www.ciscolive.com
+www.facebook.com
+www.instagram.com
+www.linkedin.com
+www.webex.com
+www.youtube.com
+

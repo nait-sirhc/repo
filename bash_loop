@@ -1,0 +1,48 @@
+naitsirhc@naitsirhc:~$ for url in $(cat list.txt); do host $url; done
+bit.ly has address 67.199.248.10
+bit.ly has address 67.199.248.11
+bit.ly mail is handled by 30 aspmx3.googlemail.com.
+bit.ly mail is handled by 20 alt2.aspmx.l.google.com.
+bit.ly mail is handled by 20 alt1.aspmx.l.google.com.
+bit.ly mail is handled by 30 aspmx2.googlemail.com.
+bit.ly mail is handled by 10 aspmx.l.google.com.
+blogs.cisco.com is an alias for blogs.xglb.cisco.com.
+blogs.xglb.cisco.com has address 173.37.149.105
+Host com.cisco.androidcisco not found: 3(NXDOMAIN)
+community.cisco.com is an alias for kxiwq67737.lithium.com.
+kxiwq67737.lithium.com has address 208.74.205.244
+engage2demand.cisco.com is an alias for s177775138.hs.eloqua.com.
+s177775138.hs.eloqua.com is an alias for p03.hs.eloqua.com.
+p03.hs.eloqua.com has address 142.0.160.17
+globalcontacts.cloudapps.cisco.com is an alias for globalcontacts-cloudapps.xglb.cisco.com.
+globalcontacts-cloudapps.xglb.cisco.com has address 72.163.10.105
+idpswd.cloudapps.cisco.com is an alias for idpswd-cloudapps.glb-ext.cisco.com.
+idpswd-cloudapps.glb-ext.cisco.com has address 72.163.10.105
+idreg.cloudapps.cisco.com is an alias for idreg-cloudapps.glb-ext.cisco.com.
+idreg-cloudapps.glb-ext.cisco.com has address 173.37.149.105
+^Cinvestor.cisco.com is an alias for webfarm-27.q4web.com.
+webfarm-27.q4web.com is an alias for webfarm-100.q4web.com.
+webfarm-100.q4web.com is an alias for webfarm-200.q4web.com.
+webfarm-200.q4web.com has address 69.172.200.252
+learninglocator.cloudapps.cisco.com is an alias for learninglocator-cloudapps.glb-ext.cisco.com.
+learninglocator-cloudapps.glb-ext.cisco.com has address 72.163.10.105
+locatr.cloudapps.cisco.com is an alias for locatr-cloudapps.xglb.cisco.com.
+locatr-cloudapps.xglb.cisco.com has address 72.163.10.124
+meraki.cisco.com is an alias for www-cisco.meraki.com.
+www-cisco.meraki.com is an alias for meraki.cisco.com.cdn.cloudflare.net.
+meraki.cisco.com.cdn.cloudflare.net has address 104.20.41.242
+meraki.cisco.com.cdn.cloudflare.net has address 104.20.40.242
+meraki.cisco.com.cdn.cloudflare.net has IPv6 address 2606:4700:10::6814:29f2
+meraki.cisco.com.cdn.cloudflare.net has IPv6 address 2606:4700:10::6814:28f2
+
+<SNIP>
+
+naitsirhc@naitsirhc:~$ for ip in $(seq 155 190);do host 50.7.67.$ip;done |grep -v "not found"
+155.67.7.50.in-addr.arpa domain name pointer mail.megacorpone.com.
+162.67.7.50.in-addr.arpa domain name pointer www.megacorpone.com.
+163.67.7.50.in-addr.arpa domain name pointer mail2.megacorpone.com.
+164.67.7.50.in-addr.arpa domain name pointer www2.megacorpone.com.
+165.67.7.50.in-addr.arpa domain name pointer beta.megacorpone.com.
+170.67.7.50.in-addr.arpa domain name pointer ns3.megacorpone.com.
+
+<SNIP>

@@ -1,0 +1,228 @@
+Bash Scripting Cheatsheet
+
+References
+
+    http://www.tldp.org/LDP/Bash-Beginners-Guide/html/index.html (Beginner)
+    http://www.tldp.org/LDP/abs/html/index.html (Advanced)
+    https://gist.github.com/LeCoupa/122b12050f5fb267e75f (Cheatsheet)
+
+    ### 0. Special Characters (more info: http://tldp.org/LDP/abs/html/special-chars.html)
+    # This is a comment
+    ;                               # semicolon: put two or more commands in one line.
+    ;;                              # double-semicolon: terminator for `case` control.
+    .                               # dot: represent the current directory or used in regex.
+    \                               # escape: for escaping characters.
+    /                               # path separator.
+    `anycommand`                    # backtick: command substitution.
+    $(...)                          # alternative to backtick, but also support nesting of commands.
+    :                               # null command: Useful in various places, for eg: for `if/then` statement.
+    !                               # Negation: Useful in comparison.
+    *                               # Wild card or arithmetic operator.
+    **                              # double exponential operator.
+    ?                               # test operator. Have different usage (in regex, double parenthensis etc.)
+    $                               # Variable substitution. Eg: `echo $var`.
+    ${}                             # See below: Parameter substitution.
+    $*, $@                          # Denotes all arguments of command line in a single string. Quoting necessary.
+    $1, $2, $3, ...                 # Denotes specific arguments of command line. If greater than 11, then use ${11}.
+    $?                              # Get the exit status of last command.
+    $$                              # Print the process id of the script.
+    ()                              # For grouping (start child process) and for initializing array.
+    {x,y,z,...}                     # Eg: cp file.{txt,md}, copy file.txt to file.md.
+    {}                              # Scoping of command and variables. Use this instead of () to stop forking.
+    [], [[]]                        # Test expression between this. Use `[]` when you want portable script. Otherwise `[[]]`
+                                    # See: https://stackoverflow.com/questions/13542832
+                                    # See also: http://wiki.bash-hackers.org/commands/classictest
+                                    # `[<expression>]` is equivalent to `test <expression>`.
+    []                              # other uses: for array index, in regex.
+    ((expression))                  # equivalent to `let "expression"`.
+    >, &>, >&, >>, <>               # See: http://tldp.org/LDP/abs/html/io-redirection.html#IOREDIRREF
+    |                               # Pipe operator: Passes the previous output to next command.
+    ||, &&                          ## Logical OR and AND operator.
+    &                               # Command followed by this will run in the background.
+    -                               # Multiple usage:
+                                        # Specifying option. Double dash (--) for long option
+                                        # For redirection from/to stdin/stdout.
+                                        # Changes to previous directory `cd -`.
+                                        # Arithmetic operator.
+    +                               # Arithmetic, Regular expression and option flag.
+    %                               # Modulo arithmetic
+    =                               # String comparison and assignment.
+
+
+    ## 1. Variables
+    ## -------------
+    # NOTE:
+        # You can't assign to reserved environment variables.
+        # Variables names must not be start with integers and doesn't contain hyphen or reserved characters.
+        # Don't use `let` to assign string to variables. That variable will always be 0.
+    foo=val                             # define variable.
+    foo="str with spaces"               # variable with spaces
+    let anyvar=3+4                      # another way to define variable. Useful for arithmetic operation also.
+    echo $anyvar                        # print the var
+    echo ${anyvar}                      # alternate way.
+    echo $?                             # print the status of previous  command.
+    unset anyvar                        # unset variable
+
+    #### 1.1 Strict Typing Variables
+    declare -r foo=1                    # Marks the variable read only
+    declare -i foo=2                    # Make the variable only integer.
+    declare -a arr                      # Will only treat as an array.
+    declare -f func_name                # Will only treat as a function. With no arg, mark all above vars functions.
+    declare -x foo                      # Make this variable available for export.
+    declare -x foo=bar                  # assign the variable while declaring.
+
+
+    #### 1.2 Internal Variables (only important)
+    $BASH                               # Path of the bash
+    $BASH_VERSION                       # Version of bash.
+    $FUNCNAME                           # Name of current function. For debugging.
+    $GROUPS                             # Groups current user belongs to .
+    $HOME                               # Home directory path.
+    $HOSTNAME                           # hostname
+    $LINENO                             # Print current line no. For debugging.
+    $OSTYPE                             # Operating system type. eg: linux, windows.
+    $PATH                               # Print all bin paths.
+    $PPID                               # The parent process id.
+    $PWD                                # The current working directory.
+    $TMPDIR                             # Print the temporary directory.
+    $RANDOM                             # Generate random number. See : http://tldp.org/LDP/abs/html/randomvar.html
+    $SECONDS                            # The number of seconds the script running.
+    $UID                                # User id number
+    $0, $1, $2, etc.                    # Specifies the argument of command line.
+    $$                                  # Process ID of the script.
+
+    #### 1.3 Parameter Substitution.
+    ${param}                            # Same as $param, but useful in some cases.
+    ## NOTE: alternative syntax for all below is without `:`, but it doesn't works for null.
+    ${param:-foo}                       # if param is null or not set, then use `foo`.
+    ${param:=foo}                       # if param is null or not set, then set `foo` and return value.
+    ${param:+foo}                       # if param set, use `foo` else return null.
+    ${param:?foo}                       # if param set, use `param` else return null. Opposite of above.
+    ${param:pos:length}, ${param:pos}   # Return `param` from `pos` to that `length` (in second form, full length).
+    ${#param}                           # Find the length of param. It can be string, array or an integer.
+
+    #### 1.4 String Manipulation
+    # You can perform, array operation on string, similar to C-lang.
+    ## See: http://tldp.org/LDP/abs/html/string-manipulation.html (for using `expr` command)
+    ${str:pos}                          # Return string from specified position (negative number allowed)
+    ${str:pos:len}                      # Return string from position to that length.
+    ${str#substr}                       # Delete shortest match of substring from front of string.
+    ${str##substr}                      # Delete longest match of substring from front of string.
+    ${str%substr}                       # Delete shortest match of substring from back of string.
+    ${str%%substr}                      # Delete longest match of substring from back of string.
+    ${str/substr/replacement}           # Replace first match of substring with replacement.
+    ${str//substr/replacement}          # Replace all match of substring with replacement.
+    ${str/#substr/replacement}          # Replace front match of substring with replacement.
+    ${str/%substr/replacement}          # Replace back match of substring with replacement.
+
+
+    ## 2. All built-in Commands
+    ## ------------------------
+    ## SEE: http://tldp.org/LDP/abs/html/internal.html#BUILTINREF for examples.
+    ## echo, cd, pwd, pushd, popd, let, set, export, declare, getopts, exit, exec, true, false, help, hash
+
+
+
+    ## 3. Arrays
+    ## ---------
+    # NOTE : You can perform string operation on array too.
+    arr[1]=22                               # Define array
+    arr[12]=12                              # Array need not be continous. It can be sparse too.
+    narr=(foo bar too)                      # Defining array.Another way.
+    echo ${#narr[0]}; echo ${#narr}         # Print 2. length of first element.
+    echo ${#narr[*]}; echo ${#narr[@]}      # Print 3. No of elements in array.
+    narr2=([0]=foo [2]=bar [4]="quoting")   # Another alternate way.
+
+
+
+    ## 4. Control Flow (Loops, If/Else, while, case)
+    ## ---------------------------------------------
+    # NOTE: Arithmetic operators (<>,==, %, ||, &&) doesn't work inside `[ ... ]`.
+    # NOTE: Always use `((...))` for arithmetic comparison. Or you've to use `-lt` (symbols) inside [...] for arithmetic.
+
+    statement1 && statement2  # and operator
+    statement1 || statement2  # or operator
+
+    ### Avoid using these two. Instead use above operator like this: `if [cond1] && [cond2]`; then ...
+    -a                        # and operator inside a test conditional expression
+    -o                        # or operator inside a test conditional expression
+
+    str1=str2                 # str1 matches str2
+    str1!=str2                # str1 does not match str2
+    str1<str2                 # str1 is less than str2
+    str1>str2                 # str1 is greater than str2
+    -n str1                   # str1 is not null (has length greater than 0)
+    -z str1                   # str1 is null (has length 0)
+
+    -a file                   # file exists
+    -d file                   # file exists and is a directory
+    -e file                   # file exists; same -a
+    -f file                   # file exists and is a regular file (i.e., not a directory or other special type of file)
+    -r file                   # you have read permission
+    -r file                   # file exists and is not empty
+    -w file                   # your have write permission
+    -x file                   # you have execute permission on file, or directory search permission if it is a directory
+    -N file                   # file was modified since it was last read
+    -O file                   # you own file
+    -G file                   # file's group ID matches yours (or one of yours, if you are in multiple groups)
+    file1 -nt file2           # file1 is newer than file2
+    file1 -ot file2           # file1 is older than file2
+
+    ### You can avoid using these with `((...))`.
+    -lt                       # less than
+    -le                       # less than or equal
+    -eq                       # equal
+    -ge                       # greater than or equal
+    -gt                       # greater than
+    -ne                       # not equal
+
+    ### If Statement
+    if list; then list; fi;         # `if test condition` is equivalent to `if [condition]`.
+    if list; then list; elif list; then list; fi;
+    if list; then list; elif list; ... else list; fi;     # elif can be omitted.
+
+    ### Case statement
+    case word in
+        case1)
+        command;;
+        case2)
+        commands;; ## ...and more cases.
+    esac
+
+    ### For loop
+    for name [in list]; do commands; done   # optionally `in list` will replaced by `$@`.
+    for (( exp1; exp2; exp3 )); do commands; done  ## same as C-Style loop.
+
+    ### While loop
+    while control-cmds; do commands; done
+
+    ### Until loop
+    ### The loop execute until the test-command succeed.
+    until test-command; do commands; done
+
+    ### Select loop
+    ### Common use-case is interactive menu generation.
+    select word [in list]; do commands; done
+
+
+    ### continue and break statement
+        # `break` and `continue` statement work similarly like C-style programming.
+
+
+    ## 5. IO Redirection
+    ## -----------------
+    ## NOTE: `stdin -> 0`, stdout -> 1, stderr -> 2
+    ## See this: http://tldp.org/LDP/abs/html/io-redirection.html
+
+
+    ## 6. DEBUGGING
+    ## ------------
+    set -o noexec                           # Check syntax error in script without running any commands.
+    set -o verbose                          # echos all commands before executing.
+    set +o verbose                          # echo off.
+
+
+
+
+
+

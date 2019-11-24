@@ -1,0 +1,86 @@
+naitsirhc@naitsirhc:~$ curl -s -I 50.63.202.61
+HTTP/1.1 200 OK
+Cache-Control: no-cache
+Pragma: no-cache
+Content-Length: 465
+Content-Type: text/html; charset=utf-8
+Expires: -1
+Server: Microsoft-IIS/7.5
+X-AspNet-Version: 4.0.30319
+X-Powered-By: ASP.NET
+Date: Sun, 24 Nov 2019 16:56:59 GMT
+Age: 10
+Connection: keep-alive
+
+naitsirhc@naitsirhc:~$ nc -v 45.33.32.156 80
+Connection to 45.33.32.156 80 port [tcp/http] succeeded!
+
+HTTP/1.1 400 Bad Request
+Date: Sun, 24 Nov 2019 17:03:52 GMT
+Server: Apache/2.4.7 (Ubuntu)
+Content-Length: 306
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>400 Bad Request</title>
+</head><body>
+<h1>Bad Request</h1>
+<p>Your browser sent a request that this server could not understand.<br />
+</p>
+<hr>
+<address>Apache/2.4.7 (Ubuntu) Server at scanme.nmap.org Port 80</address>
+</body></html>
+
+
+naitsirhc@naitsirhc:~$ dmitry -b 45.33.32.156
+Deepmagic Information Gathering Tool
+"There be some deep magic going on"
+
+Error: No '-p' flag passed with TTL, assuming -p
+HostIP:45.33.32.156
+HostName:scanme.nmap.org
+
+Gathered TCP Port information for 45.33.32.156
+---------------------------------
+
+ Port		State
+
+22/tcp		open
+>> SSH-2.0-OpenSSH_6.6.1p1 Ubuntu-2ubuntu2.13
+
+80/tcp		open
+
+Portscan Finished: Scanned 150 ports, 145 ports were in state closed
+
+
+All scans completed, exiting
+
+
+naitsirhc@naitsirhc:~$ nmap -Pn --top-ports=10 -sV --script=banner 45.33.32.156
+
+Starting Nmap 7.60 ( https://nmap.org ) at 2019-11-24 18:06 CET
+Nmap scan report for scanme.nmap.org (45.33.32.156)
+Host is up (0.16s latency).
+
+PORT     STATE  SERVICE       VERSION
+21/tcp   closed ftp
+22/tcp   open   ssh           OpenSSH 6.6.1p1 Ubuntu 2ubuntu2.13 (Ubuntu Linux; protocol 2.0)
+|_banner: SSH-2.0-OpenSSH_6.6.1p1 Ubuntu-2ubuntu2.13
+23/tcp   closed telnet
+25/tcp   closed smtp
+80/tcp   open   http          Apache httpd 2.4.7 ((Ubuntu))
+|_http-server-header: Apache/2.4.7 (Ubuntu)
+110/tcp  closed pop3
+139/tcp  closed netbios-ssn
+443/tcp  closed https
+445/tcp  closed microsoft-ds
+3389/tcp closed ms-wbt-server
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 22.08 seconds
+
+
+

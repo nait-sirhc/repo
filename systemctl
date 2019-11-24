@@ -1353,3 +1353,10 @@ nov. 24 16:35:54 naitsirhc systemd[1]: Starting OpenBSD Secure Shell server...
 nov. 24 16:35:54 naitsirhc sshd[20038]: Server listening on 0.0.0.0 port 22.
 nov. 24 16:35:54 naitsirhc sshd[20038]: Server listening on :: port 22.
 nov. 24 16:35:54 naitsirhc systemd[1]: Started OpenBSD Secure Shell server.
+
+naitsirhc@naitsirhc:~$ sudo systemctl enable ssh
+Synchronizing state of ssh.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable ssh
+naitsirhc@naitsirhc:~$ sudo systemctl enable apache2
+Synchronizing state of apache2.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable apache2

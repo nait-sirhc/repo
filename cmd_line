@@ -1,0 +1,354 @@
+Command Line Crash Course
+Related tutorials
+
+    http://cli.learncodethehardway.org/book/
+    https://www.codecademy.com/courses/learn-the-command-line
+
+Cheatsheets
+
+    Linux auf einem Blatt
+    Fasd
+
+Usage
+
+Note: Hold option (alt) and click a position in the current line to move your cursor to that position.
+
+Clear history: ctrl + l
+
+Clear everything left from current cursor position: ctrl + u
+
+Clear everything right from current cursor position: ctrl + k
+
+Re-call last input with sudo: sudo !!
+
+Stop current process: ctrl + c
+
+Jump to left: ctrl + a
+
+Jump to right: ctrl + e
+
+Help: help cd / help dir (...)
+
+Finding Help: apropos directory / apropos search (...)
+
+Define custom startup screen: sudo nano /etc/motd
+
+Run a script as background process: python script.py &
+
+List all running process's: ps aux
+
+Kill a running process: sudo kill 12345
+System
+
+Get the current path: pwd
+
+Copy to clipboard: pwd | pbcopy
+
+Paste: pbpaste
+
+Get the current hostname: hostname
+
+Get the current users: users
+
+Get all info about the environment: env
+
+Show calendar: cal
+
+Show today's date: date
+
+Exit terminal: exit
+Permissions
+
+Use -R option to change permissions recursively.
+
+List: ps -ef | grep apache | grep -v grep
+
+Change permissions: chmod 755 index.php
+
+Change owner: chown root index.php (root is the username)
+
+Change group: chgrp www-data index.php (www-data is the groupname)
+WordPress Files/Folder Permissions
+
+Let apache be owner: chown www-data:www-data -R *
+
+Change directory permissions rwxr-xr-x: find . -type d -exec chmod 755 {} \;
+
+Change file permissions rw-r--r--: find . -type f -exec chmod 644 {} \;
+
+(see http://stackoverflow.com/a/18352747/1815847)
+Directories
+
+List directory contents: ls
+
+List all directory contents: ll
+
+List all directory contents sorted by time edited: ls -alt
+
+List directory (wildcard matching): ls *.txt
+
+List all files of type: find . -name "*.txt" -print
+
+Go back to previous directory: cd -
+
+Make (empty) directory: mkdir sample-dirname
+
+Remove (empty) directory: rmdir sample-dirname
+
+Remove directory with all contents: rm -rf sample-dirname/
+
+Remove directory contents and keep directory: rm -rf *
+
+Checkout directory: cd sample-dirname
+
+Browsing directories: pushd sample-dirname / popd / dirs (see http://unix.stackexchange.com/a/77081)
+Symlinks
+
+Create symlink: ln -s source-dirname destination-dirname
+
+Update symlink: ln -sfn source-dirname destination-dirname
+
+Remove symlink: unlink sample-dirname
+
+    -s: Create a symbolic link.
+    -f: If the target file already exists, then unlink it.
+    -F: If the target file already exists and is a directory, then remove/overwrite it.
+    -h: If the target file or directory is a symbolic link, do not follow it.
+    -n: Same as -h, for compatibility with other ln implementations.
+
+Files
+
+Make (empty) file: touch sample-filename.txt
+
+Change creation date: touch –t 201401011337 sample-filename.txt
+
+Change modified date: touch –mt 201401011337 sample-filename.txt
+
+Duplicate file: cp sample-filename.txt sample-filename-copy.txt
+
+Copy/Page folder with content: cp -a folder/ new_folder
+
+Move/Rename file: mv current-filename.txt new-filename.txt
+
+Move/Rename file and prompt before overwriting an existing file: mv -i current-filename.txt new-filename.txt
+
+Remove file: rm sample-filename.txt
+
+View file: less sample-filename.txt / more sample-filename.txt
+
+Write to file (will overwrite existing content): cat > sample-filename.txt (quit with ctrl+d)
+
+Search for a filename (not content!) in the current directory: find sample-filename.txt
+
+Search for a string (not filename!) inside all files in the current directory: ack "string" --php (documentation)
+
+Search for a string inside all files in the current directory and subdrectories: grep -r "string" *
+
+Search and replace within file: sed -i '' 's/original-text/new-text/g' sample-filename.txt
+
+MD5 hash for files: md5 sample-filename.txt
+
+MD5 hash for folders: tar c folder | md5sum
+
+Encrypt file: openssl enc -aes-256-cbc -e -in sample-filename.txt -out sample-encrypted.txt
+
+Decrypt file: openssl enc -aes-256-cbc -d -in sample-encrypted.txt -out sample-filename.txt
+Server
+
+Access via ssh: ssh pi@192.168.0.0
+
+Copy file from server to local: scp pi@192.168.0.0:/path/to/file.png ~/Desktop/ (use -r to recursively get complete folder)
+
+Copy file from local to server: scp ~/Desktop/file.png pi@192.168.0.0:/path/to/folder (use -r to recursively get complete folder)
+
+Copy file from local to server: rsync --exclude=".DS_Store" -vzcrSLh ~/Desktop/file.png pi@192.168.0.0:/path/to/folder
+
+Escape files with spaces in name like this: /path/to/file\\\ name.png
+System
+
+Show disc space: df -h
+
+Show disc space (inodes): df -i
+
+Show disc space for current directory: du -hs
+
+Current processes (also CPS usage): top or htop
+
+Show running php processes: ps aux | grep php
+
+Monitor error log (stream as file grows): tail error.log -f -n 0
+Apps
+
+Start appliction: open -a [name-of-programm] e.g. open -a firefox
+
+Open finder with current folder: open .
+Variables
+
+Register variable: export TESTING="Sample Text"
+
+Echo variable: echo $TESTING
+
+Unset variable: unset TESTING
+Output & Redirects
+
+Write to file: echo "Hello" > hello.txt
+
+Append content from a file to another file: cat file1.txt >> file2.txt
+
+Add the amount of lines, words, and characters to file2.txt: cat file1.txt | wc | cat > file2.txt
+
+Sort the content of a file (like cat): sort hello.txt
+
+Save to sorted content to a new file: cat file1.txt | sort > sorted-file1.txt
+
+Sort and remove duplicates and save to a new file: sort file1.txt | uniq > uniq-file1.txt
+Functions
+
+Calculate (returns only int): echo $((123/2))
+HTTP
+
+Check site feedback: ping google.com
+
+Show site IP: dig +short google.com
+
+Show A Record: dig a google.com (Returns: google.com. 43 IN A 123.123.123.123 aka public-name ttl internet record-type server-address)
+
+Webservice: https://www.whatsmydns.net/
+
+Curl headers: curl -I https://hofmannsven.com
+Tools
+Tree
+
+Installation: brew install tree
+HTTPie
+
+Installation: brew install httpie
+
+Usage:
+
+http GET https://hofmannsven.test --verify=no
+
+
+
+
+#Linux Cheat Sheet
+
+##File Commands:
+
+    ls – directory listing
+    ls -al – formatted listing with hidden files
+    cd dir - change directory to dir
+    cd – change to home
+    pwd – show current directory
+    mkdir dir – create a directory dir
+    rm file – delete file
+    rm -r dir – delete directory dir
+    rm -f file – force remove file
+    rm -rf dir – force remove directory dir *
+    cp file1 file2 – copy file1 to file2
+    cp -r dir1 dir2 – copy dir1 to dir2; create dir2 if it doesn't exist
+    mv file1 file2 – rename or move file1 to file2 if file2 is an existing directory, moves file1 into directory file2
+    ln -s file link – create symbolic link link to file
+    touch file – create or update file
+    cat > file – places standard input into file
+    more file – output the contents of file
+    head file – output the first 10 lines of file
+    tail file – output the last 10 lines of file
+    tail -f file – output the contents of file as it grows, starting with the last 10 lines
+
+##Process Management:
+
+    ps – display your currently active processes
+    top – display all running processes
+    kill pid – kill process id pid
+    killall proc – kill all processes named proc *
+    bg – lists stopped or background jobs; resume a stopped job in the background
+    fg – brings the most recent job to foreground
+    fg n – brings job n to the foreground
+
+##File Permissions:
+
+    chmod octal file – change the permissions of file to octal, which can be found separately for user, group, and world by adding:
+    4 – read (r)
+    2 – write (w)
+    1 – execute (x)
+
+###Examples:
+
+    chmod 777 – read, write, execute for all
+    chmod 755 – rwx for owner, rx for group and world
+
+##SSH:
+
+    ssh user@host – connect to host as user
+    ssh -p port user@host – connect to host on port port as user
+    ssh-copy-id user@host – add your key to host for user to enable a keyed or passwordless login
+
+##Searching:
+
+    grep pattern files – search for pattern in files
+    grep -r pattern dir – search recursively for pattern in dir
+    command | grep pattern – search for pattern in the output of command
+    locate file – find all instances of file
+
+##System Info:
+
+    date – show the current date and time
+    cal – show this month's calendar
+    uptime – show current uptime
+    w – display who is online
+    whoami – who you are logged in as
+    finger user – display information about user
+    uname -a – show kernel information
+    cat /proc/cpuinfo – cpu information
+    cat /proc/meminfo – memory information
+    man command – show the manual for command
+    df – show disk usage
+    du – show directory space usage
+    free – show memory and swap usage
+    whereis app – show possible locations of app
+    which app – show which app will be run by default
+
+##Compression:
+
+    tar cf file.tar files – create a tar named file.tar containing files
+    tar xf file.tar – extract the files from file.tar
+    tar czf file.tar.gz files – create a tar with Gzip compression
+    tar xzf file.tar.gz – extract a tar using Gzip
+    tar cjf file.tar.bz2 – create a tar with Bzip2 compression
+    tar xjf file.tar.bz2 – extract a tar using Bzip2
+    gzip file – compresses file and renames it to file.gz
+    gzip -d file.gz – decompresses file.gz back to file
+
+##Network:
+
+    ping host – ping host and output results
+    whois domain – get whois information for domain
+    dig domain – get DNS information for domain
+    dig -x host – reverse lookup host
+    wget file – download file
+    wget -c file – continue a stopped download
+
+##Installation:
+
+    dpkg -i pkg.deb – install a package (Debian)
+    rpm -Uvh pkg.rpm – install a package (RPM)
+
+##Install from source:
+
+    ./configure
+    make
+    make install
+
+##Shortcuts:
+
+    Ctrl+C – halts the current command
+    Ctrl+Z – stops the current command, resume with
+    fg in the foreground or bg in the background
+    Ctrl+D – log out of current session, similar to exit
+    Ctrl+W – erases one word in the current line
+    Ctrl+U – erases the whole line
+    Ctrl+R – type to bring up a recent command
+    !! - repeats the last command
+    exit – log out of current session
+

